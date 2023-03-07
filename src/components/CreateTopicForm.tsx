@@ -1,7 +1,19 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose
+} from "@/components/ui/dialog"
+
 
 type Inputs = {
   title: string,
@@ -17,25 +29,36 @@ const TopicForm = ( {submitHandler}: {submitHandler: (data: {title: string}) => 
   }
 
   return (
-    <div className='flex flex-col space-y-2 px-2 mt-5'>
-      <h2 className='font-semibold font-xl'>Create a New Topic</h2>
-      <form
-        className="grid grid-cols-5 gap-2"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        
-        <Label className="col-span-1" htmlFor="title">Topic Title</Label>
-        <Input
-          className="col-span-4"
-          id="title"
-          {...register("title", { required: "Title is required" })}
-          aria-invalid={errors.title ? "true" : "false"} 
-        />
-        {errors.title && <p className="text-red-500 col-span-4 text-right" role="alert">{errors.title?.message}</p>}
-        
-        <Button type="submit">Submit</Button>
-      </form>
-    </div>
+    <>
+      <Dialog>
+        <DialogTrigger className={buttonVariants({variant: "subtle"})}>New Topic</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create a New Topic</DialogTitle>
+            <DialogDescription>
+            <form
+              className="flex flex-col space-y-2 my-2"
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              
+              <Label htmlFor="title">Title</Label>
+              <Input
+                placeholder="Name or category"
+                id="title"
+                {...register("title", { required: "Title is required" })}
+                aria-invalid={errors.title ? "true" : "false"} 
+              />
+              {errors.title && <p className="text-red-500 col-span-4 text-right" role="alert">{errors.title?.message}</p>}
+            </form>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose><Button type="submit" disabled={errors?.title ? true : false} onClick={handleSubmit(onSubmit)}>Create</Button></DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+    
   );
 }
 

@@ -3,17 +3,20 @@ import { useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown"
 import { languages } from "@codemirror/language-data";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { Label } from "./ui/label";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useSession } from "next-auth/react";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { api } from "@/utils/api";
+import { useRouter } from "next/router";
 
 type Inputs = {title: string}
 
-export const NoteEditor = ({onSave}: {onSave: (note: {title: string, content: string})  => void}) => {
+export const NoteEditor = ({ title, content, onSave }: {title: string, content: string, onSave: (note: {title: string, content: string})  => void}) => {
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<{title: string}>();
-  const [code, setCode] = useState<string>("")
+  const [code, setCode] = useState<string>(content)
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log({...data, content: code})
@@ -23,16 +26,17 @@ export const NoteEditor = ({onSave}: {onSave: (note: {title: string, content: st
   }
 
   return (
-    <div className="">
+    <div>
       <form
-        className="flex flex-col mx-5 mt-5 grid-cols-4 gap-2"
+        className="flex flex-col mt-5 grid-cols-4 gap-2"
         onSubmit={handleSubmit(onSubmit)}
       >
         <div>
-          <Label className="" htmlFor="title">Topic Title</Label>
+          {/* <Label className="" htmlFor="title">Note Title</Label> */}
           <Input
-            className=""
+            placeholder="Note Title"
             id="title"
+            defaultValue={title}
             {...register("title", { required: "Title is required" })}
             aria-invalid={errors.title ? "true" : "false"} 
           />
@@ -44,7 +48,7 @@ export const NoteEditor = ({onSave}: {onSave: (note: {title: string, content: st
             width="500px"
             height="30vh"
             minWidth="100%"
-            minHeight="30vh"
+            minHeight="50vh"
             extensions={[
               markdown({base: markdownLanguage, codeLanguages: languages})
             ]}

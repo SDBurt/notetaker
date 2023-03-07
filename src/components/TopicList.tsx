@@ -1,31 +1,37 @@
 import { cn } from '@/lib/utils'
 import { Topic } from '@prisma/client'
 import React from 'react'
+import { Label } from './ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
 interface TopicListProps {
   topics: Topic[] | undefined
   selectedTopic: Topic | null
-  topicClicked: (t: Topic) => void
+  topicClicked: (t: Topic | null) => void
 }
 
 const TopicList = ({topics, selectedTopic, topicClicked}: TopicListProps) => {
 
   return (
-    <div className='flex flex-col space-y-2 px-2'>
-      <h2 className='font-semibold font-xl'>Topics</h2>
-      <ul className='flex flex-col space-y-2'>
-      {topics?.map((topic) => {
-        return (
-        <li
-          className={cn('border rounded p-2', topic === selectedTopic ? "font-bold" : "font-normal")}
-          onClick={() => topicClicked(topic)}
-        >
-            {topic.title}
-        </li>
-        )
-      })}
-      </ul>
+    <div>
+      <Label>Topic</Label>
+      <Select
+        onValueChange={(v: string) => topicClicked(topics?.find((element) => element.title === v) ?? null)}
+        defaultValue={selectedTopic?.title}
+      >
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder={selectedTopic?.title} />
+        </SelectTrigger>
+        <SelectContent>
+          {topics?.map((topic) => {
+            return (
+              <SelectItem key={topic.id} value={topic.title}>{topic.title}</SelectItem>
+            )
+          })}
+        </SelectContent>
+      </Select>
     </div>
+    
   )
 }
 

@@ -64,7 +64,7 @@ const NotesPage: NextPage = () => {
           sessionData?.user ? (
           <div className="grid grid-cols-3 gap-2">
             <div className="col-span-1">
-              <TopicList topics={topics} topicClicked={(t: Topic) => setSelectedTopic(t)} selectedTopic={selectedTopic}/>
+              <TopicList topics={topics} topicClicked={(t: Topic | null) => setSelectedTopic(t)} selectedTopic={selectedTopic}/>
               <CreateTopicForm submitHandler={(data: {title: string}) => createTopic.mutate({title: data.title})}/>
             </div>
             <div className="col-span-2">

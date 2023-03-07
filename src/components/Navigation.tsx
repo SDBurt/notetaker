@@ -8,26 +8,37 @@ import {
 
 import Link from "next/link";
 
+const NavItems = [
+  {
+    "label": "Home",
+    "href": "/",
+  },
+  {
+    "label": "Dashboard",
+    "href": "/dashboard",
+  },
+  {
+    "label": "Notes",
+    "href": "/notes",
+  }
+]
 
 export const Navigation = () => {
 
   return (
     <NavigationMenu >
       <NavigationMenuList className="flex flex-row items-start">
-        <NavigationMenuItem>
-          <Link href="/" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Home
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link href="/notes" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Notes
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
+        {NavItems.map(navItem => {
+          return (
+            <NavigationMenuItem key={navItem.label}>
+              <Link href={navItem.href} legacyBehavior passHref>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  {navItem.label}
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+          )
+        })}
       </NavigationMenuList>
     </NavigationMenu>
   )
