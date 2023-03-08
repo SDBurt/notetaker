@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { NextPage } from 'next';
 
 import EditorLayout from '@/components/layouts/EditorLayout'
@@ -6,7 +6,7 @@ import { NoteEditor } from '@/components/NoteEditor'
 import { api } from "@/utils/api";
 import { useSession } from 'next-auth/react';
 import { Topic } from '@prisma/client';
-import TopicList from '@/components/TopicList';
+import TopicSelect from '@/components/TopicSelect';
 import CreateTopicForm from '@/components/CreateTopicForm';
 
 const CreateNotePage: NextPage = () => {
@@ -15,13 +15,11 @@ const CreateNotePage: NextPage = () => {
 
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
 
-  const createNote = api.note.create.useMutation();
-
   const { data: topics, refetch: RefetchTopics } = api.topic.getAll.useQuery(
     undefined, // no input
     {
       enabled: sessionData?.user !== undefined,
-      onSuccess: (data) => {
+      onSuccess: (data: Topic[]) => {
         setSelectedTopic(selectedTopic ?? data[0] ?? null)
       }
     },
@@ -30,6 +28,22 @@ const CreateNotePage: NextPage = () => {
   const createTopic = api.topic.create.useMutation({
     onSuccess: () => {void RefetchTopics();}
   });
+
+  const createNote = api.note.create.useMutation();
+
+  const createTopicHandler = useCallback((data: {title: string}) => {
+    void createTopic.mutate({title: data.title})
+  }, [createTopic])
+
+  const createNoteHandler = useCallback(({ title, content }: {title: string, content: string}) => {
+    void createNote.mutate(
+      {
+        title: title,
+        content: content,
+        topicId: selectedTopic?.id ?? ""
+      }
+    )
+  }, [createNote])
 
   return (
     <EditorLayout>
@@ -41,22 +55,14 @@ const CreateNotePage: NextPage = () => {
               <span className='font-normal text-gray-500'>Publish a new note</span>
             </div>
             <div className='flex flex-row justify-between'>
-              <TopicList topics={topics} topicClicked={(t: Topic | null) => setSelectedTopic(t)} selectedTopic={selectedTopic}/>
-              <CreateTopicForm submitHandler={(data: {title: string}) => createTopic.mutate({title: data.title})}/>
+              <TopicSelect topics={topics} topicClicked={(t: Topic | null) => setSelectedTopic(t)} selectedTopic={selectedTopic}/>
+              <CreateTopicForm submitHandler={createTopicHandler}/>
             </div>
 
             <NoteEditor
               title=""
               content=""
-              onSave={({ title, content }) => {
-                void createNote.mutate(
-                  {
-                    title: title,
-                    content: content,
-                    topicId: selectedTopic?.id ?? ""
-                  }
-                )
-              }}/>
+              onSave={createNoteHandler}/>
           </div>
           ) : null
       }

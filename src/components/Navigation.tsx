@@ -16,10 +16,6 @@ const NavItems = [
   {
     "label": "Dashboard",
     "href": "/dashboard",
-  },
-  {
-    "label": "Notes",
-    "href": "/notes",
   }
 ]
 

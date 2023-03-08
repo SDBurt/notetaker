@@ -50,7 +50,7 @@ function NoteList() {
           <span className='font-normal text-gray-500'>Create and manage notes</span>
         </div>
         <div>
-          <Link href="/editor/create"><Button>New Note</Button></Link>
+          <Link href="/create/note"><Button>New Note</Button></Link>
         </div>
       </div>
       <div className='flex flex-row justify-between items-center'>

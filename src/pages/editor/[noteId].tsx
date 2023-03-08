@@ -2,13 +2,13 @@ import EditorLayout from '@/components/layouts/EditorLayout'
 import { NoteEditor } from '@/components/NoteEditor'
 import { api } from '@/utils/api';
 import { useSession } from 'next-auth/react';
-import router from 'next/router';
+import { useRouter } from 'next/router';
 import React from 'react'
 
 const EditNotePage = () => {
 
   const { data: sessionData } = useSession();
-
+  const router = useRouter()
   const { data: note } = api.note.getFirst.useQuery(
     {
       noteId: (router.query.noteId ?? "") as string
@@ -33,7 +33,8 @@ const EditNotePage = () => {
               content: content,
               topicId: note?.topicId ?? ""
             }
-          )
+          );
+          router.push("/dashboard");
         }}
       /> : null}
     </EditorLayout>

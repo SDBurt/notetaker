@@ -4,18 +4,15 @@ import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown"
 import { languages } from "@codemirror/language-data";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useSession } from "next-auth/react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/router";
 
 
 type Inputs = {title: string}
 
 export const NoteEditor = ({ title, content, onSave }: {title: string, content: string, onSave: (note: {title: string, content: string})  => void}) => {
 
-  const router = useRouter()
 
   const { register, handleSubmit, formState: { errors } } = useForm<{title: string}>();
   const [code, setCode] = useState<string>(content)
@@ -23,7 +20,6 @@ export const NoteEditor = ({ title, content, onSave }: {title: string, content: 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log({...data, content: code})
     onSave({...data, content: code})
-    router.push("/dashboard")
   }
 
   return (
