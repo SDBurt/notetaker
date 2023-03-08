@@ -1,9 +1,12 @@
+import Head from 'next/head'
 import ViewerLayout from '@/components/layouts/ViewerLayout'
 import NoteViewer from '@/components/NoteViewer'
-import Head from 'next/head'
-import React from 'react'
+import { useSession } from 'next-auth/react'
 
 const ViewNotePage = () => {
+  
+  const { data: sessionData } = useSession();
+
   return (
     <>
       <Head>
@@ -12,7 +15,11 @@ const ViewNotePage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ViewerLayout>
-        <NoteViewer />
+        {
+          sessionData?.user ? (
+            <NoteViewer />
+          ) : (<p>Please log in to continue</p>)
+        }
       </ViewerLayout>
     </>
     

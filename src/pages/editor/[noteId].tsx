@@ -4,12 +4,12 @@ import { api } from '@/utils/api';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React from 'react'
+import React, { useCallback } from 'react'
 
 const EditNotePage = () => {
 
-  const { data: sessionData } = useSession();
   const router = useRouter()
+  const { data: sessionData } = useSession();
   const { data: note } = api.note.getFirst.useQuery(
     {
       noteId: (router.query.noteId ?? "") as string
@@ -21,6 +21,23 @@ const EditNotePage = () => {
 
   const updateNote = api.note.update.useMutation();
   
+  const updateNoteHandler = useCallback(({title, content}: {title: string, content: string}) => {
+    
+    if (!note?.id) {
+      return;
+    }
+
+    void updateNote.mutate(
+      {
+        noteId: note.id,
+        title: title,
+        content: content,
+        topicId: note?.topicId ?? ""
+      }
+    );
+    router.push("/dashboard");
+  },[updateNote])
+
   return (
     <>
       <Head>
@@ -29,20 +46,10 @@ const EditNotePage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <EditorLayout>
-        {note ? <NoteEditor
+        {note && sessionData ? <NoteEditor
           title={note.title}
           content={note.content}
-          onSave={({ title, content}) => {
-            void updateNote.mutate(
-              {
-                noteId: note.id,
-                title: title,
-                content: content,
-                topicId: note?.topicId ?? ""
-              }
-            );
-            router.push("/dashboard");
-          }}
+          onSave={updateNoteHandler}
         /> : null}
       </EditorLayout>
     </>

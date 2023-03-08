@@ -55,7 +55,7 @@ const CreateNotePage: NextPage = () => {
       </Head>
       <EditorLayout>
         {
-          sessionData?.user ? (
+          sessionData ? (
             <div className='flex flex-col space-y-4 mt-8'>
               <div>
                 <h1 className='font-bold text-2xl'>Create</h1>
@@ -71,7 +71,7 @@ const CreateNotePage: NextPage = () => {
                 content=""
                 onSave={createNoteHandler}/>
             </div>
-            ) : null
+            ) : (<p>Please log in to continue</p>)
         }
       </EditorLayout>
     </>

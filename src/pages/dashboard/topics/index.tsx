@@ -3,8 +3,12 @@ import { NextPage } from 'next'
 import DashboardLayout from '@/components/layouts/DashboardLayout'
 import TopicList from '@/components/TopicList'
 import Head from 'next/head'
+import { useSession } from 'next-auth/react'
 
 const TopicsPage: NextPage = () => {
+
+  const { data: sessionData } = useSession();
+
   return (
     <>
       <Head>
@@ -13,7 +17,11 @@ const TopicsPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <DashboardLayout>
-        <TopicList/>
+      {
+        sessionData?.user ? (
+          <TopicList/>
+        ) : (<p>Please log in to continue</p>)
+      }
       </DashboardLayout>
     </>
 
