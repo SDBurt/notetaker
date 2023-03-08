@@ -1,39 +1,63 @@
-import { cn } from '@/lib/utils'
-import { Topic } from '@prisma/client'
+import { api } from '@/utils/api';
+import { Topic } from '@prisma/client';
+import { useSession } from 'next-auth/react';
 import React from 'react'
-import { Label } from './ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
+import CreateTopicForm from './CreateTopicForm';
+import { Button } from './ui/button';
 
-interface TopicListProps {
-  topics: Topic[] | undefined
-  selectedTopic: Topic | null
-  topicClicked: (t: Topic | null) => void
-}
+const TopicList = () => {
 
-const TopicList = ({topics, selectedTopic, topicClicked}: TopicListProps) => {
+  const { data: sessionData } = useSession();
+
+  const { data: topics, refetch: RefetchTopics } = api.topic.getAll.useQuery(
+    undefined, // no input
+    {
+      enabled: sessionData?.user !== undefined,
+    },
+  );
+
+  const createTopic = api.topic.create.useMutation({
+    onSuccess: () => {void RefetchTopics();}
+  });
+
+  const deleteTopic = api.topic.delete.useMutation({
+    onSuccess: () => {void RefetchTopics();}
+  })
 
   return (
-    <div>
-      <Label>Topic</Label>
-      <Select
-        onValueChange={(v: string) => topicClicked(topics?.find((element) => element.title === v) ?? null)}
-        defaultValue={selectedTopic?.title}
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder={selectedTopic?.title} />
-        </SelectTrigger>
-        <SelectContent>
-          {topics?.map((topic) => {
+    <div className='flex flex-col space-y-4'>
+      <div className='flex flex-row justify-between'>
+        <div>
+          <h1 className='font-bold text-2xl'>Topics</h1>
+          <span className='font-normal text-gray-500'>Create and manage topics</span>
+        </div>
+        <div>
+          <CreateTopicForm submitHandler={(data: {title: string}) => createTopic.mutate({title: data.title})}/>
+        </div>
+      </div>
+      <div className='flex flex-col space-y-2'>
+        {
+          topics && topics.length > 0 ? topics?.map((topic: Topic) => {
             return (
-              <SelectItem key={topic.id} value={topic.title}>{topic.title}</SelectItem>
+              <div key={topic.title} className='flex flex-row justify-between items-center p-4 border border-gray-200 rounded'>
+                <div className='flex flex-col'>
+                  <h2 className='font-bold'>{topic.title}</h2>
+                </div>
+                <div className='flex flex-row space-x-2'>
+                  <Button variant="subtle" size="sm" onClick={() => {
+                      void deleteTopic.mutate({ id: topic.id })
+                  }}>Delete</Button>
+                </div>
+              </div>
             )
-          })}
-        </SelectContent>
-      </Select>
+          }) : null
+        }
+        {
+          topics && topics.length === 0 ? (<p>No Topics. Create a new topic now.</p>) : null
+        }
+      </div>
     </div>
-    
   )
 }
 
 export default TopicList
-

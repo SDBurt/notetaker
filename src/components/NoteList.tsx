@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 import { Button } from './ui/button'
 
 import { api } from "@/utils/api";
-import TopicList from './TopicList';
+import TopicSelect from '@/components/TopicSelect';
 import CreateTopicForm from './CreateTopicForm';
 
 function NoteList() {
@@ -44,44 +44,44 @@ function NoteList() {
 
   return (
     <div className='flex flex-col space-y-4'>
-    <div className='flex flex-row justify-between pb-4'>
-      <div>
-        <h1 className='font-bold text-2xl'>Notes</h1>
-        <span className='font-normal text-gray-500'>Create and manage notes</span>
+      <div className='flex flex-row justify-between'>
+        <div>
+          <h1 className='font-bold text-2xl'>Notes</h1>
+          <span className='font-normal text-gray-500'>Create and manage notes</span>
+        </div>
+        <div>
+          <Link href="/editor/create"><Button>New Note</Button></Link>
+        </div>
       </div>
-      <div>
-        <Link href="/editor/create"><Button>New Note</Button></Link>
+      <div className='flex flex-row justify-between items-center'>
+        <TopicSelect topics={topics} topicClicked={(t: Topic | null) => setSelectedTopic(t)} selectedTopic={selectedTopic}/>
+        <CreateTopicForm submitHandler={(data: {title: string}) => createTopic.mutate({title: data.title})}/>
       </div>
-    </div>
-    <div className='flex flex-row justify-between'>
-      <TopicList topics={topics} topicClicked={(t: Topic | null) => setSelectedTopic(t)} selectedTopic={selectedTopic}/>
-      <CreateTopicForm submitHandler={(data: {title: string}) => createTopic.mutate({title: data.title})}/>
-    </div>
-    <div className='flex flex-col space-y-2'>
-      {
-        notes && notes.length > 0 ? notes?.map((note: Note) => {
-          return (
-            <div key={note.title} className='flex flex-row justify-between items-center p-4 border border-gray-200 rounded'>
-              <div className='flex flex-col'>
-                <Link href={`/notes/${note.id}`} className="hover:underline">
-                  <h2 className='font-bold'>{note.title}</h2>
-                </Link>
-                <span className='font-normal text-gray-500'>Date Placeholder</span>
+      <div className='flex flex-col space-y-2'>
+        {
+          notes && notes.length > 0 ? notes?.map((note: Note) => {
+            return (
+              <div key={note.title} className='flex flex-row justify-between items-center p-4 border border-gray-200 rounded'>
+                <div className='flex flex-col'>
+                  <Link href={`/notes/${note.id}`} className="hover:underline">
+                    <h2 className='font-bold'>{note.title}</h2>
+                  </Link>
+                  {/* <span className='font-normal text-gray-500'>Date Placeholder</span> */}
+                </div>
+                <div className='flex flex-row space-x-2'>
+                  <Link href={`/editor/${note.id}`}><Button variant="subtle" size="sm">Edit</Button></Link>
+                  <Button variant="subtle" size="sm" onClick={() => {
+                      void deleteNote.mutate({ id: note.id })
+                  }}>Delete</Button>
+                </div>
               </div>
-              <div className='flex flex-row space-x-2'>
-                <Link href={`/editor/${note.id}`}><Button variant="subtle" size="sm">Edit</Button></Link>
-                <Button variant="subtle" size="sm" onClick={() => {
-                    void deleteNote.mutate({ id: note.id })
-                }}>Delete</Button>
-              </div>
-            </div>
-          )
-        }) : null
-      }
-      {
-        notes && notes.length === 0 ? (<p>No notes under this topic. Create a new note now.</p>) : null
-      }
-    </div>
+            )
+          }) : null
+        }
+        {
+          notes && notes.length === 0 ? (<p>No notes. Create a new note now.</p>) : null
+        }
+      </div>
     </div>
   )
 }

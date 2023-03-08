@@ -5,7 +5,6 @@ import { SessionProvider } from "next-auth/react";
 import { Inter as FontSans } from "next/font/google"
 
 import { api } from "@/utils/api";
-import { cn } from "@/lib/utils";
 
 
 import "@/styles/globals.css";

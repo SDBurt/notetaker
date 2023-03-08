@@ -1,14 +1,14 @@
 import React from 'react'
 import { NextPage } from 'next'
 import DashboardLayout from '@/components/layouts/DashboardLayout'
-import NoteList from '@/components/NoteList'
+import TopicList from '@/components/TopicList'
 
-const DashboardPage: NextPage = () => {
+const TopicsPage: NextPage = () => {
   return (
     <DashboardLayout>
-      <NoteList />
+      <TopicList/>
     </DashboardLayout>
   )
 }
 
-export default DashboardPage
+export default TopicsPage

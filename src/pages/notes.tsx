@@ -79,6 +79,8 @@ const NotesPage: NextPage = () => {
               }
               
               <NoteEditor
+                title=""
+                content=""
                 onSave={({ title, content}) => {
                   void createNote.mutate(
                     {

@@ -14,20 +14,25 @@ import { usePathname } from "next/navigation"
 
 const items = [
   {
-    title: "Dashboard",
+    title: "Notes",
     href: "/dashboard",
     disabled: false
   },
   {
-    title: "Billing",
-    href: "/dashboard/billing",
-    disabled: true
+    title: "Topics",
+    href: "/dashboard/topics",
+    disabled: false
   },
-  {
-    title: "Settings",
-    href: "/dashboard/settings",
-    disabled: true
-  },
+  // {
+  //   title: "Billing",
+  //   href: "/dashboard/billing",
+  //   disabled: true
+  // },
+  // {
+  //   title: "Settings",
+  //   href: "/dashboard/settings",
+  //   disabled: true
+  // },
 
 ]
 

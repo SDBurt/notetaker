@@ -8,21 +8,22 @@ import { useSession } from "next-auth/react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { api } from "@/utils/api";
 import { useRouter } from "next/router";
+
 
 type Inputs = {title: string}
 
 export const NoteEditor = ({ title, content, onSave }: {title: string, content: string, onSave: (note: {title: string, content: string})  => void}) => {
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<{title: string}>();
+  const router = useRouter()
+
+  const { register, handleSubmit, formState: { errors } } = useForm<{title: string}>();
   const [code, setCode] = useState<string>(content)
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log({...data, content: code})
     onSave({...data, content: code})
-    reset(); // reset form data
-    setCode("") // reset codemirror editor content
+    router.push("/dashboard")
   }
 
   return (
