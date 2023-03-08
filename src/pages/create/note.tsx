@@ -8,6 +8,7 @@ import { useSession } from 'next-auth/react';
 import { Topic } from '@prisma/client';
 import TopicSelect from '@/components/TopicSelect';
 import CreateTopicForm from '@/components/CreateTopicForm';
+import Head from 'next/head';
 
 const CreateNotePage: NextPage = () => {
 
@@ -46,27 +47,35 @@ const CreateNotePage: NextPage = () => {
   }, [createNote])
 
   return (
-    <EditorLayout>
-      {
-        sessionData?.user ? (
-          <div className='flex flex-col space-y-4 mt-8'>
-            <div>
-              <h1 className='font-bold text-2xl'>Create</h1>
-              <span className='font-normal text-gray-500'>Publish a new note</span>
-            </div>
-            <div className='flex flex-row justify-between'>
-              <TopicSelect topics={topics} topicClicked={(t: Topic | null) => setSelectedTopic(t)} selectedTopic={selectedTopic}/>
-              <CreateTopicForm submitHandler={createTopicHandler}/>
-            </div>
+    <>
+      <Head>
+        <title>NoteTaker - Create Note</title>
+          <meta name="description" content="Visit notetaker-ecru.vercel.app" />
+          <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <EditorLayout>
+        {
+          sessionData?.user ? (
+            <div className='flex flex-col space-y-4 mt-8'>
+              <div>
+                <h1 className='font-bold text-2xl'>Create</h1>
+                <span className='font-normal text-gray-500'>Publish a new note</span>
+              </div>
+              <div className='flex flex-row justify-between'>
+                <TopicSelect topics={topics} topicClicked={(t: Topic | null) => setSelectedTopic(t)} selectedTopic={selectedTopic}/>
+                <CreateTopicForm submitHandler={createTopicHandler}/>
+              </div>
 
-            <NoteEditor
-              title=""
-              content=""
-              onSave={createNoteHandler}/>
-          </div>
-          ) : null
-      }
-    </EditorLayout>
+              <NoteEditor
+                title=""
+                content=""
+                onSave={createNoteHandler}/>
+            </div>
+            ) : null
+        }
+      </EditorLayout>
+    </>
+    
   )
 }
 

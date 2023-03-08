@@ -10,7 +10,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Note Taker</title>
+        <title>Note Taker - Home</title>
         <meta name="description" content="A note taking app built with T3" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
